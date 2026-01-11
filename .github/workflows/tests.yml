@@ -24,32 +24,37 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          cd kyc-mock-app/server && npm ci
+          cd ../client && npm ci
+          cd ../..
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Setup KYC Mock Server
-        run: |
-          cd kyc-mock-app/server
-          npm ci
-          npm start &
-          sleep 5
-        env:
-          PORT: 3000
-
       - name: Run linting
         run: npm run lint
 
+      - name: Start backend server
+        run: |
+          cd kyc-mock-app/server
+          npm start &
+          cd ../..
+          sleep 3
+
       - name: Run API tests
-        run: npm run test:api
-        env:
-          CI: true
+        run: npx playwright test tests/api --reporter=list
+
+      - name: Start frontend
+        run: |
+          cd kyc-mock-app/client
+          npm start &
+          cd ../..
+          sleep 10
 
       - name: Run E2E tests
-        run: npm run test:e2e
-        env:
-          CI: true
+        run: npx playwright test tests/e2e --reporter=list
 
       - name: Upload test results
         if: always()
