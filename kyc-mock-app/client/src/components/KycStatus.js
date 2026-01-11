@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { getKycInfo } from '../api';
 
 const KycStatus = ({ userId, onStatusChange }) => {
@@ -6,7 +6,7 @@ const KycStatus = ({ userId, onStatusChange }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const fetchKycInfo = async () => {
+  const fetchKycInfo = useCallback(async () => {
     try {
       const response = await getKycInfo(userId);
       if (response.success) {
@@ -18,7 +18,7 @@ const KycStatus = ({ userId, onStatusChange }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId, onStatusChange]);
 
   useEffect(() => {
     fetchKycInfo();
@@ -26,7 +26,7 @@ const KycStatus = ({ userId, onStatusChange }) => {
     // Poll for status updates every 3 seconds
     const interval = setInterval(fetchKycInfo, 3000);
     return () => clearInterval(interval);
-  }, [userId]);
+  }, [userId, fetchKycInfo]);
 
   if (loading) {
     return (

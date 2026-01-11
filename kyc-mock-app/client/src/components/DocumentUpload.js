@@ -4,14 +4,12 @@ import { uploadKycDocument } from '../api';
 
 const DocumentUpload = ({ userId, onUploadSuccess, onUploadError }) => {
   const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
 
   const onDrop = useCallback(async (acceptedFiles) => {
     if (acceptedFiles.length === 0) return;
 
     const file = acceptedFiles[0];
     setUploading(true);
-    setUploadProgress(0);
 
     try {
       const response = await uploadKycDocument(userId, file);
@@ -22,7 +20,6 @@ const DocumentUpload = ({ userId, onUploadSuccess, onUploadError }) => {
       onUploadError(error.message || 'Upload failed');
     } finally {
       setUploading(false);
-      setUploadProgress(0);
     }
   }, [userId, onUploadSuccess, onUploadError]);
 
