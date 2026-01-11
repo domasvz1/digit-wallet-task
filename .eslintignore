@@ -1,0 +1,7 @@
+node_modules/
+dist/
+kyc-mock-app/
+playwright-report/
+test-results/
+*.config.ts
+scripts/

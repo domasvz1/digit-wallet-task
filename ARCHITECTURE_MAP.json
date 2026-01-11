@@ -1,0 +1,185 @@
+{
+  "project": {
+    "name": "Digital Wallet QA Automation",
+    "type": "Test Automation",
+    "framework": "Playwright + TypeScript",
+    "description": "Automated testing for Digital Wallet KYC verification system"
+  },
+  "architecture": {
+    "layers": [
+      {
+        "name": "Test Layer",
+        "path": "tests/",
+        "responsibilities": [
+          "API endpoint testing",
+          "End-to-end UI testing",
+          "Test data generation",
+          "Test execution and assertions"
+        ],
+        "structure": {
+          "api": "API-level tests for backend endpoints",
+          "e2e": "End-to-end UI tests for user journeys",
+          "fixtures": "Test data generators and test files",
+          "helpers": "Reusable utilities and API clients",
+          "types": "TypeScript interfaces and enums"
+        }
+      },
+      {
+        "name": "Page Object Layer",
+        "path": "pages/",
+        "responsibilities": [
+          "Encapsulate page interactions",
+          "Provide high-level actions for UI elements",
+          "Maintain selectors and locators",
+          "Return page objects for method chaining"
+        ],
+        "pattern": "Page Object Model (POM)",
+        "rules": [
+          "One page object per logical page/component",
+          "No assertions in page objects",
+          "Expose only high-level actions"
+        ]
+      },
+      {
+        "name": "Configuration Layer",
+        "files": [
+          "playwright.config.ts",
+          "tsconfig.json",
+          ".eslintrc.json"
+        ],
+        "responsibilities": [
+          "Test execution configuration",
+          "TypeScript compilation settings",
+          "Code quality rules"
+        ]
+      }
+    ]
+  },
+  "executionFlow": {
+    "runApiTests": {
+      "command": "npm run test:api",
+      "script": "scripts/run-api-tests.js",
+      "prerequisites": "None - script auto-starts backend",
+      "steps": [
+        "Run: npm run test:api"
+      ],
+      "automation": [
+        "Script starts backend server on port 3000",
+        "Script runs 14 API tests",
+        "Script stops backend server"
+      ],
+      "expectedResults": "20 API tests pass",
+      "executionTime": "20-25 seconds"
+    },
+    "runUiTests": {
+      "command": "npm run test:e2e",
+      "script": "scripts/run-ui-tests.js",
+      "prerequisites": "None - script auto-starts backend and frontend",
+      "steps": [
+        "Run: npm run test:e2e"
+      ],
+      "automation": [
+        "Script waits for backend server readiness on port 3000",
+        "Script waits for frontend readiness on port 3001",
+        "Script runs 3 E2E UI tests",
+        "Script stops both servers"
+      ],
+      "expectedResults": "3 E2E tests pass",
+      "executionTime": "10-15 seconds"
+    }
+  },
+  "testFlow": {
+    "userRegistration": {
+      "endpoint": "POST /api/users",
+      "validations": [
+        "Email format validation",
+        "Phone number format validation (10+ digits)",
+        "Password length validation (6+ characters)",
+        "Email uniqueness check",
+        "Phone uniqueness check",
+        "Required fields validation"
+      ],
+      "testFiles": [
+        "tests/api/user-registration.spec.ts",
+        "tests/api/user-registration-validation.spec.ts",
+        "tests/api/user-registration-duplicates.spec.ts",
+        "tests/api/user-registration-edge-cases.spec.ts",
+        "tests/e2e/registration-flow.spec.ts"
+      ]
+    },
+    "kycVerification": {
+      "endpoints": [
+        "POST /api/kyc/:userId",
+        "GET /api/kyc/:userId"
+      ],
+      "statusFlow": [
+        "no_documents",
+        "validating",
+        "valid OR invalid"
+      ],
+      "validations": [
+        "File type validation (JPEG, PNG, PDF)",
+        "File size validation (max 5MB)",
+        "User existence check",
+        "KYC completion check",
+        "Async verification handling (2-20 seconds)"
+      ],
+      "testFiles": [
+        "tests/api/kyc-verification.spec.ts",
+        "tests/api/kyc-verification-status.spec.ts",
+        "tests/api/kyc-verification-edge-cases.spec.ts",
+        "tests/e2e/kyc-upload-flow.spec.ts"
+      ]
+    }
+  },
+  "dataFlow": {
+    "testDataGeneration": {
+      "location": "tests/fixtures/test-data.ts",
+      "methods": [
+        "generateUniqueEmail()",
+        "generateUniquePhone()",
+        "generateValidUserData()",
+        "generateInvalidEmailUserData()",
+        "generateInvalidPhoneUserData()",
+        "generateShortPasswordUserData()"
+      ],
+      "strategy": "Dynamic generation with timestamp-based uniqueness"
+    },
+    "apiClient": {
+      "location": "tests/helpers/api-client.ts",
+      "methods": [
+        "registerUser(userData)",
+        "getUser(userId)",
+        "uploadKycDocument(userId, filePath)",
+        "getKycStatus(userId)"
+      ],
+      "pattern": "Centralized API client with type-safe responses"
+    }
+  },
+  "fileStructure": {
+    "tests/api/": "API tests organized by feature (registration, kyc, validation, duplicates)",
+    "tests/e2e/": "End-to-end UI tests for complete user flows",
+    "tests/fixtures/": "Test data generators and test files (valid.pdf, invalid.jpg)",
+    "tests/helpers/": "Reusable API client and utilities",
+    "tests/types/": "TypeScript interfaces for API responses and test data",
+    "pages/": "Page Object Models (registration.page.ts, kyc.page.ts)"
+  },
+  "namingConventions": {
+    "files": "kebab-case (e.g., user-registration.spec.ts)",
+    "classes": "PascalCase (e.g., RegistrationPage)",
+    "functions": "camelCase (e.g., fillRegistrationForm)",
+    "constants": "UPPER_SNAKE_CASE (e.g., MAX_FILE_SIZE)",
+    "interfaces": "PascalCase (e.g., UserData, UserResponse)"
+  },
+  "dependencies": {
+    "runtime": [
+      "@playwright/test",
+      "typescript"
+    ],
+    "development": [
+      "eslint",
+      "@typescript-eslint/eslint-plugin",
+      "@typescript-eslint/parser"
+    ]
+  }
+}

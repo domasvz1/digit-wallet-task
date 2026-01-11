@@ -1,0 +1,34 @@
+{
+  "name": "digital-wallet-qa-automation",
+  "version": "1.0.0",
+  "description": "QA Automation for Digital Wallet KYC Verification System",
+  "scripts": {
+    "postinstall": "npx playwright install chromium",
+    "test:api": "node scripts/run-api-tests.js",
+    "test:e2e": "node scripts/run-ui-tests.js",
+    "test": "playwright test --reporter=list",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:report": "playwright show-report",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix"
+  },
+  "keywords": [
+    "qa",
+    "automation",
+    "playwright",
+    "typescript",
+    "kyc",
+    "testing"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "eslint": "^8.54.0",
+    "typescript": "^5.3.0"
+  }
+}
